@@ -6,6 +6,7 @@ export interface Download {
   quality: string;
   format: string;
   folder: string;
+  custom_name: string;
   custom_name_prefix: string;
   playlist_item_limit: number;
   split_by_chapters?: boolean;

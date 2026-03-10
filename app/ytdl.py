@@ -153,6 +153,7 @@ class DownloadInfo:
         quality,
         format,
         folder,
+        custom_name,
         custom_name_prefix,
         error,
         entry,
@@ -169,6 +170,7 @@ class DownloadInfo:
         self.quality = quality
         self.format = format
         self.folder = folder
+        self.custom_name = custom_name
         self.custom_name_prefix = custom_name_prefix
         self.msg = self.percent = self.speed = self.eta = None
         self.status = "pending"
@@ -643,7 +645,10 @@ class DownloadQueue:
         dldirectory, error_message = self.__calc_download_path(dl.quality, dl.format, dl.folder)
         if error_message is not None:
             return error_message
-        output = self.config.OUTPUT_TEMPLATE if len(dl.custom_name_prefix) == 0 else f'{dl.custom_name_prefix}.{self.config.OUTPUT_TEMPLATE}'
+        if getattr(dl, 'custom_name', None):
+            output = dl.custom_name if len(dl.custom_name_prefix) == 0 else f'{dl.custom_name_prefix}.{dl.custom_name}'
+        else:
+            output = self.config.OUTPUT_TEMPLATE if len(dl.custom_name_prefix) == 0 else f'{dl.custom_name_prefix}.{self.config.OUTPUT_TEMPLATE}'
         output_chapter = self.config.OUTPUT_TEMPLATE_CHAPTER
         entry = getattr(dl, 'entry', None)
         if entry is not None and entry.get('playlist_index') is not None:
@@ -677,6 +682,7 @@ class DownloadQueue:
         quality,
         format,
         folder,
+        custom_name,
         custom_name_prefix,
         playlist_item_limit,
         auto_start,
@@ -708,6 +714,7 @@ class DownloadQueue:
                 quality,
                 format,
                 folder,
+                custom_name,
                 custom_name_prefix,
                 playlist_item_limit,
                 auto_start,
@@ -747,6 +754,7 @@ class DownloadQueue:
                         quality,
                         format,
                         folder,
+                        custom_name,
                         custom_name_prefix,
                         playlist_item_limit,
                         auto_start,
@@ -776,6 +784,7 @@ class DownloadQueue:
                     quality,
                     format,
                     folder,
+                    custom_name,
                     custom_name_prefix,
                     error,
                     entry,
@@ -808,7 +817,7 @@ class DownloadQueue:
         _add_gen=None,
     ):
         log.info(
-            f'adding {url}: {quality=} {format=} {already=} {folder=} {custom_name_prefix=} '
+            f'adding {url}: {quality=} {format=} {already=} {folder=} {custom_name=} {custom_name_prefix=} '
             f'{playlist_item_limit=} {auto_start=} {split_by_chapters=} {chapter_template=} '
             f'{subtitle_format=} {subtitle_language=} {subtitle_mode=}'
         )
@@ -830,6 +839,7 @@ class DownloadQueue:
             quality,
             format,
             folder,
+            custom_name,
             custom_name_prefix,
             playlist_item_limit,
             auto_start,

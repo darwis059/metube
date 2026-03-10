@@ -280,6 +280,7 @@ async def add(request):
         raise web.HTTPBadRequest()
     format = post.get('format')
     folder = post.get('folder')
+    custom_name = post.get('custom_name')
     custom_name_prefix = post.get('custom_name_prefix')
     playlist_item_limit = post.get('playlist_item_limit')
     auto_start = post.get('auto_start')
@@ -289,6 +290,10 @@ async def add(request):
     subtitle_language = post.get('subtitle_language')
     subtitle_mode = post.get('subtitle_mode')
 
+    if custom_name is None:
+        custom_name = ''
+    if custom_name and ('..' in custom_name or custom_name.startswith('/') or custom_name.startswith('\\')):
+        raise web.HTTPBadRequest(reason='custom_name must not contain ".." or start with a path separator')
     if custom_name_prefix is None:
         custom_name_prefix = ''
     if custom_name_prefix and ('..' in custom_name_prefix or custom_name_prefix.startswith('/') or custom_name_prefix.startswith('\\')):
@@ -326,6 +331,7 @@ async def add(request):
         quality,
         format,
         folder,
+        custom_name,
         custom_name_prefix,
         playlist_item_limit,
         auto_start,

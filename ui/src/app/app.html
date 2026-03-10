@@ -199,6 +199,19 @@
                   </div>
 
                 </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="input-group">
+                    <span class="input-group-text">Item Name</span>
+                    <input type="text"
+                      class="form-control"
+                      placeholder="Default"
+                      name="customName"
+                      [(ngModel)]="customName"
+                      [disabled]="addInProgress || downloads.loading"
+                      ngbTooltip="Set a custom output file name">
+                  </div>
+                </div>
                 <div class="col-md-6">
                   <div class="input-group">
                     <span class="input-group-text">Custom Name Prefix</span>

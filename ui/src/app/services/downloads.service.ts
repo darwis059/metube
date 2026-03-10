@@ -27,84 +27,84 @@ export class DownloadsService {
 
   constructor() {
     this.socket.fromEvent('all')
-    .pipe(takeUntilDestroyed())
-    .subscribe((strdata: string) => {
-      this.loading = false;
-      const data: [[[string, Download]], [[string, Download]]] = JSON.parse(strdata);
-      this.queue.clear();
-      data[0].forEach(entry => this.queue.set(...entry));
-      this.done.clear();
-      data[1].forEach(entry => this.done.set(...entry));
-      this.queueChanged.next(null);
-      this.doneChanged.next(null);
-    });
+      .pipe(takeUntilDestroyed())
+      .subscribe((strdata: string) => {
+        this.loading = false;
+        const data: [[[string, Download]], [[string, Download]]] = JSON.parse(strdata);
+        this.queue.clear();
+        data[0].forEach(entry => this.queue.set(...entry));
+        this.done.clear();
+        data[1].forEach(entry => this.done.set(...entry));
+        this.queueChanged.next(null);
+        this.doneChanged.next(null);
+      });
     this.socket.fromEvent('added')
-    .pipe(takeUntilDestroyed())
-    .subscribe((strdata: string) => {
-      const data: Download = JSON.parse(strdata);
-      this.queue.set(data.url, data);
-      this.queueChanged.next(null);
-    });
+      .pipe(takeUntilDestroyed())
+      .subscribe((strdata: string) => {
+        const data: Download = JSON.parse(strdata);
+        this.queue.set(data.url, data);
+        this.queueChanged.next(null);
+      });
     this.socket.fromEvent('updated')
-    .pipe(takeUntilDestroyed())
-    .subscribe((strdata: string) => {
-      const data: Download = JSON.parse(strdata);
-      const dl: Download | undefined  = this.queue.get(data.url);
-      data.checked = !!dl?.checked;
-      data.deleting = !!dl?.deleting;
-      this.queue.set(data.url, data);
-      this.updated.next(null);
-    });
+      .pipe(takeUntilDestroyed())
+      .subscribe((strdata: string) => {
+        const data: Download = JSON.parse(strdata);
+        const dl: Download | undefined = this.queue.get(data.url);
+        data.checked = !!dl?.checked;
+        data.deleting = !!dl?.deleting;
+        this.queue.set(data.url, data);
+        this.updated.next(null);
+      });
     this.socket.fromEvent('completed')
-    .pipe(takeUntilDestroyed())
-    .subscribe((strdata: string) => {
-      const data: Download = JSON.parse(strdata);
-      this.queue.delete(data.url);
-      this.done.set(data.url, data);
-      this.queueChanged.next(null);
-      this.doneChanged.next(null);
-    });
+      .pipe(takeUntilDestroyed())
+      .subscribe((strdata: string) => {
+        const data: Download = JSON.parse(strdata);
+        this.queue.delete(data.url);
+        this.done.set(data.url, data);
+        this.queueChanged.next(null);
+        this.doneChanged.next(null);
+      });
     this.socket.fromEvent('canceled')
-    .pipe(takeUntilDestroyed())
-    .subscribe((strdata: string) => {
-      const data: string = JSON.parse(strdata);
-      this.queue.delete(data);
-      this.queueChanged.next(null);
-    });
+      .pipe(takeUntilDestroyed())
+      .subscribe((strdata: string) => {
+        const data: string = JSON.parse(strdata);
+        this.queue.delete(data);
+        this.queueChanged.next(null);
+      });
     this.socket.fromEvent('cleared')
-    .pipe(takeUntilDestroyed())
-    .subscribe((strdata: string) => {
-      const data: string = JSON.parse(strdata);
-      this.done.delete(data);
-      this.doneChanged.next(null);
-    });
+      .pipe(takeUntilDestroyed())
+      .subscribe((strdata: string) => {
+        const data: string = JSON.parse(strdata);
+        this.done.delete(data);
+        this.doneChanged.next(null);
+      });
     this.socket.fromEvent('configuration')
-    .pipe(takeUntilDestroyed())
-    .subscribe((strdata: string) => {
-      const data = JSON.parse(strdata);
-      console.debug("got configuration:", data);
-      this.configuration = data;
-      this.configurationChanged.next(data);
-    });
+      .pipe(takeUntilDestroyed())
+      .subscribe((strdata: string) => {
+        const data = JSON.parse(strdata);
+        console.debug("got configuration:", data);
+        this.configuration = data;
+        this.configurationChanged.next(data);
+      });
     this.socket.fromEvent('custom_dirs')
-    .pipe(takeUntilDestroyed())
-    .subscribe((strdata: string) => {
-      const data = JSON.parse(strdata);
-      console.debug("got custom_dirs:", data);
-      this.customDirs = data;
-      this.customDirsChanged.next(data);
-    });
+      .pipe(takeUntilDestroyed())
+      .subscribe((strdata: string) => {
+        const data = JSON.parse(strdata);
+        console.debug("got custom_dirs:", data);
+        this.customDirs = data;
+        this.customDirsChanged.next(data);
+      });
     this.socket.fromEvent('ytdl_options_changed')
-    .pipe(takeUntilDestroyed())
-    .subscribe((strdata: string) => {
-      const data = JSON.parse(strdata);
-      this.ytdlOptionsChanged.next(data);
-    });
+      .pipe(takeUntilDestroyed())
+      .subscribe((strdata: string) => {
+        const data = JSON.parse(strdata);
+        this.ytdlOptionsChanged.next(data);
+      });
   }
 
   handleHTTPError(error: HttpErrorResponse) {
     const msg = error.error instanceof ErrorEvent ? error.error.message : error.error;
-    return of({status: 'error', msg: msg})
+    return of({ status: 'error', msg: msg })
   }
 
   public add(
@@ -112,6 +112,7 @@ export class DownloadsService {
     quality: string,
     format: string,
     folder: string,
+    customName: string,
     customNamePrefix: string,
     playlistItemLimit: number,
     autoStart: boolean,
@@ -126,6 +127,7 @@ export class DownloadsService {
       quality: quality,
       format: format,
       folder: folder,
+      custom_name: customName,
       custom_name_prefix: customNamePrefix,
       playlist_item_limit: playlistItemLimit,
       auto_start: autoStart,
@@ -140,7 +142,7 @@ export class DownloadsService {
   }
 
   public startById(ids: string[]) {
-    return this.http.post('start', {ids: ids});
+    return this.http.post('start', { ids: ids });
   }
 
   public delById(where: State, ids: string[]) {
@@ -153,7 +155,7 @@ export class DownloadsService {
         }
       }
     }
-    return this.http.post('delete', {where: where, ids: ids});
+    return this.http.post('delete', { where: where, ids: ids });
   }
 
   public startByFilter(where: State, filter: (dl: Download) => boolean) {
@@ -168,13 +170,15 @@ export class DownloadsService {
     return this.delById(where, ids);
   }
   public addDownloadByUrl(url: string): Promise<{
-    response: Status} | {
+    response: Status
+  } | {
     status: string;
     msg?: string;
   }> {
     const defaultQuality = 'best';
     const defaultFormat = 'mp4';
-    const defaultFolder = ''; 
+    const defaultFolder = '';
+    const defaultCustomName = '';
     const defaultCustomNamePrefix = '';
     const defaultPlaylistItemLimit = 0;
     const defaultAutoStart = true;
@@ -190,6 +194,7 @@ export class DownloadsService {
         defaultQuality,
         defaultFormat,
         defaultFolder,
+        defaultCustomName,
         defaultCustomNamePrefix,
         defaultPlaylistItemLimit,
         defaultAutoStart,
