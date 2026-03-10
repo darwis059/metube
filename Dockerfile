@@ -56,6 +56,12 @@ RUN BGUTIL_TAG="$(curl -Ls -o /dev/null -w '%{url_effective}' https://github.com
     unzip -q /tmp/bgutil-ytdlp-pot-provider-rs.zip -d "${PLUGIN_DIR}" && \
     rm /tmp/bgutil-ytdlp-pot-provider-rs.zip
 
+# Run the official Rclone installation script
+# This script automatically detects the architecture and installs the latest version
+RUN curl https://rclone.org/install.sh | bash
+ENV XDG_CONFIG_HOME /config
+
+
 COPY app ./app
 COPY --from=builder /metube/dist/metube ./ui/dist/metube
 

@@ -187,6 +187,14 @@
               </div>
               <div class="col-md-6">
                 <div class="input-group">
+                  <span class="input-group-text">Post-Download Exec</span>
+                  <input type="text" class="form-control" placeholder="Default" name="customExec"
+                    [(ngModel)]="customExec" [disabled]="addInProgress || downloads.loading"
+                    ngbTooltip="Command to run after download completes (yt-dlp --exec)">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
                   <span class="input-group-text">Items Limit</span>
                   <input type="number" min="0" class="form-control" placeholder="Default" name="playlistItemLimit"
                     (keydown)="isNumber($event)" [(ngModel)]="playlistItemLimit"

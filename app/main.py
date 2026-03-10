@@ -282,6 +282,7 @@ async def add(request):
     folder = post.get('folder')
     custom_name = post.get('custom_name')
     custom_name_prefix = post.get('custom_name_prefix')
+    custom_exec = post.get('custom_exec')
     playlist_item_limit = post.get('playlist_item_limit')
     auto_start = post.get('auto_start')
     split_by_chapters = post.get('split_by_chapters')
@@ -298,6 +299,8 @@ async def add(request):
         custom_name_prefix = ''
     if custom_name_prefix and ('..' in custom_name_prefix or custom_name_prefix.startswith('/') or custom_name_prefix.startswith('\\')):
         raise web.HTTPBadRequest(reason='custom_name_prefix must not contain ".." or start with a path separator')
+    if custom_exec is None:
+        custom_exec = ''
     if auto_start is None:
         auto_start = True
     if playlist_item_limit is None:
@@ -333,6 +336,7 @@ async def add(request):
         folder,
         custom_name,
         custom_name_prefix,
+        custom_exec,
         playlist_item_limit,
         auto_start,
         split_by_chapters,

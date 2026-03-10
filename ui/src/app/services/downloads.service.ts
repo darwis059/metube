@@ -114,6 +114,7 @@ export class DownloadsService {
     folder: string,
     customName: string,
     customNamePrefix: string,
+    customExec: string,
     playlistItemLimit: number,
     autoStart: boolean,
     splitByChapters: boolean,
@@ -129,6 +130,7 @@ export class DownloadsService {
       folder: folder,
       custom_name: customName,
       custom_name_prefix: customNamePrefix,
+      custom_exec: customExec,
       playlist_item_limit: playlistItemLimit,
       auto_start: autoStart,
       split_by_chapters: splitByChapters,
@@ -180,6 +182,7 @@ export class DownloadsService {
     const defaultFolder = '';
     const defaultCustomName = '';
     const defaultCustomNamePrefix = '';
+    const defaultCustomExec = '';
     const defaultPlaylistItemLimit = 0;
     const defaultAutoStart = true;
     const defaultSplitByChapters = false;
@@ -196,6 +199,7 @@ export class DownloadsService {
         defaultFolder,
         defaultCustomName,
         defaultCustomNamePrefix,
+        defaultCustomExec,
         defaultPlaylistItemLimit,
         defaultAutoStart,
         defaultSplitByChapters,

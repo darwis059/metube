@@ -47,6 +47,7 @@ export class App implements AfterViewInit, OnInit {
   folder!: string;
   customName!: string;
   customNamePrefix!: string;
+  customExec!: string;
   autoStart: boolean;
   playlistItemLimit!: number;
   splitByChapters: boolean;
@@ -407,6 +408,7 @@ export class App implements AfterViewInit, OnInit {
     folder?: string,
     customName?: string,
     customNamePrefix?: string,
+    customExec?: string,
     playlistItemLimit?: number,
     autoStart?: boolean,
     splitByChapters?: boolean,
@@ -421,6 +423,7 @@ export class App implements AfterViewInit, OnInit {
     folder = folder ?? this.folder
     customName = customName ?? this.customName
     customNamePrefix = customNamePrefix ?? this.customNamePrefix
+    customExec = customExec ?? this.customExec
     playlistItemLimit = playlistItemLimit ?? this.playlistItemLimit
     autoStart = autoStart ?? this.autoStart
     splitByChapters = splitByChapters ?? this.splitByChapters
@@ -435,10 +438,10 @@ export class App implements AfterViewInit, OnInit {
       return;
     }
 
-    console.debug('Downloading: url=' + url + ' quality=' + quality + ' format=' + format + ' folder=' + folder + ' customName=' + customName + ' customNamePrefix=' + customNamePrefix + ' playlistItemLimit=' + playlistItemLimit + ' autoStart=' + autoStart + ' splitByChapters=' + splitByChapters + ' chapterTemplate=' + chapterTemplate + ' subtitleFormat=' + subtitleFormat + ' subtitleLanguage=' + subtitleLanguage + ' subtitleMode=' + subtitleMode);
+    console.debug('Downloading: url=' + url + ' quality=' + quality + ' format=' + format + ' folder=' + folder + ' customName=' + customName + ' customNamePrefix=' + customNamePrefix + ' customExec=' + customExec + ' playlistItemLimit=' + playlistItemLimit + ' autoStart=' + autoStart + ' splitByChapters=' + splitByChapters + ' chapterTemplate=' + chapterTemplate + ' subtitleFormat=' + subtitleFormat + ' subtitleLanguage=' + subtitleLanguage + ' subtitleMode=' + subtitleMode);
     this.addInProgress = true;
     this.cancelRequested = false;
-    this.downloads.add(url, quality, format, folder, customName, customNamePrefix, playlistItemLimit, autoStart, splitByChapters, chapterTemplate, subtitleFormat, subtitleLanguage, subtitleMode).subscribe((status: Status) => {
+    this.downloads.add(url, quality, format, folder, customName, customNamePrefix, customExec, playlistItemLimit, autoStart, splitByChapters, chapterTemplate, subtitleFormat, subtitleLanguage, subtitleMode).subscribe((status: Status) => {
       if (status.status === 'error' && !this.cancelRequested) {
         alert(`Error adding URL: ${status.msg}`);
       } else if (status.status !== 'error') {
@@ -470,6 +473,7 @@ export class App implements AfterViewInit, OnInit {
       download.folder,
       download.custom_name,
       download.custom_name_prefix,
+      download.custom_exec,
       download.playlist_item_limit,
       true,
       download.split_by_chapters,
@@ -622,7 +626,7 @@ export class App implements AfterViewInit, OnInit {
       const url = urls[index];
       this.batchImportStatus = `Importing URL ${index + 1} of ${urls.length}: ${url}`;
       // Now pass the selected quality, format, folder, etc. to the add() method
-      this.downloads.add(url, this.quality, this.format, this.folder, this.customName, this.customNamePrefix,
+      this.downloads.add(url, this.quality, this.format, this.folder, this.customName, this.customNamePrefix, this.customExec,
         this.playlistItemLimit, this.autoStart, this.splitByChapters, this.chapterTemplate,
         this.subtitleFormat, this.subtitleLanguage, this.subtitleMode)
         .subscribe({

@@ -155,6 +155,7 @@ class DownloadInfo:
         folder,
         custom_name,
         custom_name_prefix,
+        custom_exec,
         error,
         entry,
         playlist_item_limit,
@@ -172,6 +173,7 @@ class DownloadInfo:
         self.folder = folder
         self.custom_name = custom_name
         self.custom_name_prefix = custom_name_prefix
+        self.custom_exec = custom_exec
         self.msg = self.percent = self.speed = self.eta = None
         self.status = "pending"
         self.size = None
@@ -282,6 +284,14 @@ class Download:
                 ytdl_params['postprocessors'].append({
                     'key': 'FFmpegSplitChapters',
                     'force_keyframes': False
+                })
+
+            if getattr(self.info, 'custom_exec', None):
+                if 'postprocessors' not in ytdl_params:
+                    ytdl_params['postprocessors'] = []
+                ytdl_params['postprocessors'].append({
+                    'key': 'Exec', 
+                    'exec_cmd': self.info.custom_exec
                 })
 
             ret = yt_dlp.YoutubeDL(params=ytdl_params).download([self.info.url])
@@ -684,6 +694,7 @@ class DownloadQueue:
         folder,
         custom_name,
         custom_name_prefix,
+        custom_exec,
         playlist_item_limit,
         auto_start,
         split_by_chapters,
@@ -716,6 +727,7 @@ class DownloadQueue:
                 folder,
                 custom_name,
                 custom_name_prefix,
+                custom_exec,
                 playlist_item_limit,
                 auto_start,
                 split_by_chapters,
@@ -756,6 +768,7 @@ class DownloadQueue:
                         folder,
                         custom_name,
                         custom_name_prefix,
+                        custom_exec,
                         playlist_item_limit,
                         auto_start,
                         split_by_chapters,
@@ -786,6 +799,7 @@ class DownloadQueue:
                     folder,
                     custom_name,
                     custom_name_prefix,
+                    custom_exec,
                     error,
                     entry,
                     playlist_item_limit,
@@ -817,7 +831,7 @@ class DownloadQueue:
         _add_gen=None,
     ):
         log.info(
-            f'adding {url}: {quality=} {format=} {already=} {folder=} {custom_name=} {custom_name_prefix=} '
+            f'adding {url}: {quality=} {format=} {already=} {folder=} {custom_name=} {custom_name_prefix=} {custom_exec=} '
             f'{playlist_item_limit=} {auto_start=} {split_by_chapters=} {chapter_template=} '
             f'{subtitle_format=} {subtitle_language=} {subtitle_mode=}'
         )
@@ -841,6 +855,7 @@ class DownloadQueue:
             folder,
             custom_name,
             custom_name_prefix,
+            custom_exec,
             playlist_item_limit,
             auto_start,
             split_by_chapters,
